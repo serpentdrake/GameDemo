@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Background
   - Terrain
+  - movingPlatform
+  - platform
   layers:
   - Default
   - TransparentFX
