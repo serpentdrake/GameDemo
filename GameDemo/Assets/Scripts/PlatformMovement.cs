@@ -11,7 +11,7 @@ public class PlatformMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.Lerp(pos1, pos2, Mathf.PingPong(Time.time * speed, 2.0f));
+        transform.position = Vector3.Lerp(pos1, pos2, Mathf.PingPong(Time.time * speed, 2.1f));
 
     }
 

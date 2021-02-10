@@ -8,6 +8,8 @@ TagManager:
   - Terrain
   - movingPlatform
   - platform
+  - OutofBounds
+  - death
   layers:
   - Default
   - TransparentFX

@@ -4,25 +4,28 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
+    [SerializeField] private LayerMask platformsLayerMask;
     public Rigidbody2D rb2d;
     public int speed;
     private Animator anim;
+    private BoxCollider2D boxCollider2D;
+    private bool canDjump;
     
     void Start()
     {
         anim = GetComponent<Animator>();
+        boxCollider2D = transform.GetComponent<BoxCollider2D>();
     }
 
     
     void Update()
     {
-        bool isGrounded = true;
+      
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb2d.velocity = new Vector2(moveInput * speed, rb2d.velocity.y);
-        bool isJumping = false;
-        bool doublejump = false;
+       
      
+        //left right movement
         if( moveInput < 0)
         {
             transform.eulerAngles = new Vector3(0, 180, 0);
@@ -32,42 +35,75 @@ public class PlayerMovement : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, 0);
         }
 
-        if(isGrounded == true && Input.GetKey(KeyCode.W))
+
+        //jumping
+        if (IsGrounded())
         {
-            isJumping = true;
-            rb2d.velocity = new Vector2(rb2d.velocity.x, 6f);
-            anim.SetBool("isJumping", true);
+            canDjump = true;
         }
-        else
+
+        if( Input.GetKey(KeyCode.W))
+        {
+            if (IsGrounded())
+            {
+                float jumpVel = 8f;
+                rb2d.velocity = Vector2.up * jumpVel;
+
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    if (canDjump)
+                    {
+                        float jumpVel = 8f;
+                        rb2d.velocity = Vector2.up * jumpVel;
+                        canDjump = false;
+                    }
+                }
+            }
+        }
+
+
+        //animations
+
+        if (IsGrounded())
         {
             anim.SetBool("isJumping", false);
-        }
-        if(isJumping == true && Input.GetKey(KeyCode.W))
-        {
-            doublejump = true;
-            anim.SetBool("isJumping", true);
-        }
-        if( doublejump == true && Input.GetKey(KeyCode.W))
-        {
 
-        }
-
-        if (moveInput == 0)
-        {
-            anim.SetBool("isRunning", false);
+            if(moveInput == 0)
+            {
+                anim.SetBool("isRunning", false);
+            } 
+            else
+            {
+                anim.SetBool("isRunning", true);
+            }
         }
         else
         {
-            anim.SetBool("isRunning", true);
+            anim.SetBool("isJumping", true);
         }
       
     }
 
+    private bool IsGrounded()
+    {
+       RaycastHit2D raycastHit2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, .1f, platformsLayerMask);
+
+        return raycastHit2D.collider != null;
+    }
     private void OnCollisionEnter2D(Collision2D other)
     {
         if(other.gameObject.CompareTag("movingPlatform"))
         {
             this.transform.parent = other.transform; 
+        }
+        //player death
+        if (other.gameObject.CompareTag("death"))
+        {
+            Destroy(gameObject);
+            LevelManager.instance.Respawn();
         }
     }
 
