@@ -10,6 +10,7 @@ TagManager:
   - platform
   - OutofBounds
   - death
+  - GameOver
   layers:
   - Default
   - TransparentFX

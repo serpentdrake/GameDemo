@@ -102,8 +102,11 @@ public class PlayerMovement : MonoBehaviour
         //player death
         if (other.gameObject.CompareTag("death"))
         {
-            Destroy(gameObject);
-            LevelManager.instance.Respawn();
+            LevelManager.instance.Retry();
+        }
+        if (other.gameObject.CompareTag("GameOver"))
+        {
+            LevelManager.instance.GameOver();
         }
     }
 
